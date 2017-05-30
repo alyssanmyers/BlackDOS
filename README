@@ -1,0 +1,31 @@
+3460:426 Operating Systems --- BlackDOS Shell and Writing to Disk
+Alyssa Myers & Luciano Mogorovic
+
+General Description
+-------------------
+1) Beginning design of BlackDOS. Demonstrates each function described below.
+2) Begin I/O tasks involving the floppy disk. Demonstrates each function described below.
+3) Implement functions for deleting and writing files, and add several new
+commands to the shell
+
+Functions
+---------
+- printString() takes a character pointer and prints to the screen using Interrupt 16. A do-while loop is used to iterate through each character in the string.
+- readString() takes a character pointer and uses Interrupt 22 to receive input from the keyboard.
+- clearScreen() takes two integers, bx and cx, to determine the background color and foreground color by using the standard 16-color text palette. The attribute byte describes the color and intensity of subsequent characters (lower four bits), as well as the background color (four higher bits).
+- readInt() takes an integer pointer, and in the function it calls readString() to receive input from the keyboard. It takes the returned character pointer and iterates through character by character to determine which digit is represented by each character.
+- handleInterrupt21() receives four integers, ax, bx, cx, and dx, to be used by the interrupt 33 handler to call all previously described functions.
+
+-readSector() takes two integers, the address of a character array where the sector will be stored and the number of the sector being read, to read a disk sector into a buffer.
+-readFile() takes three integers, the address of a character array containing the file name, the address of a character array where the file contents will be stored, and the total number of sectors to be read, to read a file into the provided buffer.
+-runProgram() takes two integers, the address of a character array containing the file name of the program to be run and the segment in memory to place the program into, to use readFile to load a program into the buffer, then putInMemory to read the file from the buffer into memory, and run the program using launchProgram.
+-stop() terminates a running program by holding up the system.
+-error() issues an error message.
+
+- writeSector(): takes a char array with the contents to be written and a number which corresponds to the sector number to be written to. This function is almost identical to readSector() with the only difference being ax = 769 and not 513.
+- deleteFile(): takes a char array containing the name of the file to be deleted. This function first goes through the directory and changes all the sectors that were held by the file to free. Second, the function goes through the sectors that were held by the file and sets the corresponding map byte to zero.
+- writeFile(): takes a char array containing the name of the file to be written, another char array containing the contents of the file to be written, and a number which is the number of sectors to write the file to. First the function searches through the directory for a free sector to write the name to. Then it searches for free sectors to write the contents of the file to. 
+
+Shell.c
+-------
+Now, every time blackDOS is run the shell is put on the disk and run. The shell gives blackDOS a command line style interface. We had to implement 10 different commands that can be used given this command line interface. All 10 commands we implemented just call functions that we have previously wrote in kernel.c. We use the functions from Projects 1 and 2 and the three new functions we wrote in this project to execute commands like copy and echo. To learn about all the available commands, just type 'help' on the command line and it displays a list with all the available commands and their descriptions. 
